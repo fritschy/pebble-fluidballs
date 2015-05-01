@@ -410,7 +410,11 @@ static void window_unload(Window *window)
 
 static void anim_setup(Animation *anim) {}
 
+#if defined(PBL_PLATFORM_BASALT)
+static void anim_update(Animation *anim, const AnimationProgress d)
+#else
 static void anim_update(Animation *anim, const uint32_t d)
+#endif
 {
    layer_mark_dirty(window_get_root_layer(s_state.window));
    update_gravity();
