@@ -53,10 +53,10 @@ static unsigned int get_time(void)
 
 #define M_PI (i2f(31415) / 10000)
 
-#define NUMBALLS 60
+#define NUMBALLS 50
 #define GRAV (i2f(981) / 3000)  // 1/30 of 1g
 
-#define Q 11  // works quite well with 10 bits
+#define Q 10  // works quite well with 10 bits
 #define F (1 << Q)
 #define M (F - 1)
 #define i2f(i) ((f32)((i)*F))
@@ -126,8 +126,8 @@ static void fluidballs_init(void)
 {
    s_state.accx = 0;
    s_state.accy = GRAV;
-   s_state.e = i2f(97) / 100;
-   s_state.grav = GRAV_SHOW;
+   s_state.e = i2f(95) / 100;
+   s_state.grav = GRAV_SENSOR;
 
    f32 max_radius = i2f(10);
 
@@ -296,7 +296,7 @@ static void repaint_balls(Layer *layer, GContext *ctx)
 
 #if defined(PBL_PLATFORM_BASALT)
    fill = GColorBrightGreen;
-   graphics_context_set_antialiased(ctx, true);
+   graphics_context_set_antialiased(ctx, false);
    graphics_context_set_stroke_width(ctx, outline_only ? 1 : 0);
 #endif
 
@@ -364,9 +364,9 @@ static void update_gravity(void)
       }
 
       // http://developer.getpebble.com/guides/pebble-apps/sensors/accelerometer
-      // values in milli G
-      s_state.accx = adata.x * GRAV / 1000;
-      s_state.accy = -adata.y * GRAV / 1000;
+      // values in centi G
+      s_state.accx = adata.x * GRAV / 300;
+      s_state.accy = -adata.y * GRAV / 300;
 
       u = 0;
    }
@@ -448,7 +448,7 @@ static void init(void)
 {
    accel_data_service_subscribe(0, NULL);
    s_state.window = window_create();
-   window_set_fullscreen(s_state.window, true);
+   /* window_set_fullscreen(s_state.window, true); */
    s_state.bounds = (GRect){.size = (GSize){.w = 144, .h = 168}};
    s_state.anim = animation_create();
    fluidballs_init();
